@@ -7,39 +7,53 @@ var app = angular.module('starter', ['ionic'])
 
 app.controller('myCtrl', function($scope, $http) {
   $http.get("https://jsonplaceholder.typicode.com/users").success(function(response){
-      $scope.user = [];
-      $scope.dataForUser = response;
-      for(var i=0, userData = response.length; i < userData; i++){
-        var track = response[i];
-        var allTracks = {
-            id: track.id,
-            name: track.name,
-        };
-        // console.log(allTracks);
-        $scope.user.push(allTracks);
-    }
-  });
+        $scope.user = [];
+        $scope.dataForUser = response;
+        for(var i=0, userData = response.length; i < userData; i++){
+          var track = response[i];
+          var allTracks = {
+              id: track.id,
+              name: track.name,
+          };
+          // console.log(allTracks);
+          $scope.user.push(allTracks);
+      }
+    });
 
-    $scope.createBlog = function (Data) {  
-        var GetAll = new Object(); 
-        GetAll.title = Data.title;  
-        GetAll.body = Data.body; 
+ 
+  $scope.details = {
+   
+  };
+  $scope.activeMenu = 'list';
 
-        $http({  
-            url: "https://jsonplaceholder.typicode.com/posts",  
-            dataType: 'json',  
-            method: 'POST',  
-            data: GetAll,  
-            headers: {  
-                "Content-Type": "application/json"  
-            }  
-         }).success(function (response) { 
-            console.log("reponse data", response) 
-            $scope.value = response;  
-         })  
-           .error(function (error) {  
-              alert(error);  
-           });  
-    } 
+ (function(){
+    getData();
+ })();
+
+ function getData(){
+   $http.get("https://jsonplaceholder.typicode.com/posts").success(function(response){
+        $scope.posts = response;
+    });
+ }
+
+  $scope.createBlog = function () {
+      $http({  
+          url: "https://jsonplaceholder.typicode.com/posts",  
+          dataType: 'json',  
+          method: 'POST',  
+          data: { 'title' : $scope.details.title , 'body': $scope.details.body },  
+          headers: {  
+              "Content-Type": "application/json"  
+          }  
+       }).success(function (response) {
+        $scope.message = 'Your blog post successfully added.'
+          $scope.value = response;  
+          $scope.details = {};
+       })  
+         .error(function (error) {  
+           $scope.message = 'failed to add post.'
+            alert(error);  
+         });  
+  } 
  
 });
